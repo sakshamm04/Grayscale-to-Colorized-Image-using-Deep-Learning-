@@ -10,4 +10,4 @@ __pycache__/
 # Local files
 test_output.jpg
 
-models/colorization_release_v2.caffemodel
+

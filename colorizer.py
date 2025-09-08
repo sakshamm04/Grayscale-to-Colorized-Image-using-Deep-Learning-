@@ -9,38 +9,32 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import requests
 
-# --- GLOBAL VARIABLES ---
-net = None
-reg_model = None
+# Use the writable /tmp directory for the downloaded model
+DATA_DIR = "/tmp/models"
 
 def load_model():
-    """
-    Loads all ML models into the global variables.
-    """
     global net, reg_model
     
-    # --- MODEL DOWNLOAD LOGIC ---
-    model_dir = "models"
     model_name = "colorization_release_v2.caffemodel"
-    model_path = os.path.join(model_dir, model_name)
-    proto_path = os.path.join(model_dir, 'colorization_deploy_v2.prototxt')
-    hull_path = os.path.join(model_dir, 'pts_in_hull.npy')
+    model_path = os.path.join(DATA_DIR, model_name)
+    proto_path = os.path.join('models', 'colorization_deploy_v2.prototxt')
+    hull_path = os.path.join('models', 'pts_in_hull.npy')
     download_url = "https://drive.google.com/uc?export=download&id=1vbxBPDvkKtIZUKM0bAi7NbWeZbohRnw1"
 
     if not os.path.exists(model_path):
-        print(f"'{model_name}' not found. Downloading...")
-        os.makedirs(model_dir, exist_ok=True)
+        print(f"'{model_name}' not found. Downloading to '{DATA_DIR}'...")
+        os.makedirs(DATA_DIR, exist_ok=True)
         try:
             response = requests.get(download_url, stream=True)
             response.raise_for_status()
             with open(model_path, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192): f.write(chunk)
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
             print("✅ Model downloaded successfully!")
         except requests.exceptions.RequestException as e:
             print(f"❌ Error downloading model: {e}")
             exit()
     
-    # --- MODEL INITIALIZATION LOGIC ---
     print("⏳ Initializing colorizer engine...")
     try:
         net = dnn.readNetFromCaffe(proto_path, model_path)
@@ -54,15 +48,18 @@ def load_model():
 
         reg_model = joblib.load('regression_model.pkl')
         print("✅ Colorizer engine ready!")
+        return net, reg_model
     except Exception as e:
-        raise e
+        print(f"❌ CRITICAL ERROR: Could not load models. {e}")
+        return None, None
 
-# --- CORE FUNCTIONS (These remain unchanged) ---
-# ... (all your other functions: process_image, etc. are the same) ...
-def process_image(image_path):
+# ... (The rest of your functions: process_image, etc., are correct and don't need changes)
+def process_image(image_path, net):
     image = cv2.imread(image_path)
     if image is None:
-        raise FileNotFoundError(f"Image not found at path: {image_path}")
+        raise FileNotFoundError(f"OpenCV could not read the image at path: {image_path}. It might be a format issue.")
+    if image.shape[2] == 4:
+        image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
     scaled = image.astype("float32") / 255.0
     lab_img = cv2.cvtColor(scaled, cv2.COLOR_BGR2LAB)
     L = cv2.split(lab_img)[0]
@@ -77,7 +74,7 @@ def process_image(image_path):
     colorized_bgr = (255 * colorized_bgr).astype("uint8")
     return colorized_bgr
 
-def predict_quality_metrics(colorized_image_obj):
+def predict_quality_metrics(colorized_image_obj, reg_model):
     features = cv2.calcHist([colorized_image_obj], [0, 1, 2], None, [8, 8, 8], [0, 256, 0, 256, 0, 256]).flatten()
     predicted_metrics = reg_model.predict([features])
     ssim_pred, psnr_pred = predicted_metrics[0]
