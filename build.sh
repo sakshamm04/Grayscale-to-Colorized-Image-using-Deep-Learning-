@@ -16,10 +16,9 @@ apt-get install -y \
     libsm6 \
     libxext6 \
     libxrender-dev \
-    ffmpeg \
-    libgtk2.0-0
+    ffmpeg
 
-# Install Python packages from requirements.txt
+# Install Python dependencies from requirements.txt
 echo "Installing Python packages..."
 pip install -r requirements.txt
 

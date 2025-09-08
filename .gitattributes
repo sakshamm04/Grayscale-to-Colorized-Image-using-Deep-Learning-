@@ -1,1 +1,22 @@
-*Caffemodel filter=lfs diff=lfs merge=lfs -text
+# Git LFS configuration for large model files
+*.caffemodel filter=lfs diff=lfs merge=lfs -text
+*.pth filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.h5 filter=lfs diff=lfs merge=lfs -text
+*.onnx filter=lfs diff=lfs merge=lfs -text
+*.pb filter=lfs diff=lfs merge=lfs -text
+
+# Track large data files
+*.pkl filter=lfs diff=lfs merge=lfs -text
+models/*.npy filter=lfs diff=lfs merge=lfs -text
+
+# Ensure text files are handled normally
+*.py text
+*.md text
+*.txt text
+*.yml text
+*.yaml text
+*.json text
+*.html text
+*.css text
+*.js text

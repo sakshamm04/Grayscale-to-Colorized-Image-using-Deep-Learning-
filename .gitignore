@@ -1,13 +1,70 @@
 # Python
-Project-Folder/
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# IDE specific
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# IDEs
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# Local files
-test_output.jpg
+# OS
+.DS_Store
+Thumbs.db
 
+# Logs
+*.log
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Temporary files and cache
+*.tmp
+*.temp
+/tmp/
+__pycache__/
+
+# Uploads and outputs (runtime generated)
+/uploads/
+/colorized/
+/plots/
+/static/uploads/
+/static/colorized/
+/static/plots/
+
+# Don't ignore model files - they're tracked by Git LFS
+# models/ - REMOVED, we want to track these with LFS
+
+# Local test files
+test_images/
+sample_images/
+
+# Deployment artifacts
+.dockerignore
+docker-compose.yml
