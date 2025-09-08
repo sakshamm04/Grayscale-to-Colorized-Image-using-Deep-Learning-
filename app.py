@@ -2,10 +2,10 @@
 import os
 from flask import Flask, request, render_template
 import cv2
+from waitress import serve # <--- ADD THIS IMPORT
 
 # Import our custom functions from the colorizer.py file
-# You will see the "Initializing..." message from colorizer.py print here
-from colorizer import process_image, predict_quality_metrics, save_rgb_histogram
+from colorizer import process_image, predict_quality_metrics, save_rgb_histogram, load_model
 
 # --- FLASK APP SETUP ---
 app = Flask(__name__)
@@ -14,12 +14,13 @@ app = Flask(__name__)
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
 COLORIZED_FOLDER = os.path.join('static', 'colorized')
 PLOT_FOLDER = os.path.join('static', 'plots')
-
-# Create these folders if they don't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(COLORIZED_FOLDER, exist_ok=True)
 os.makedirs(PLOT_FOLDER, exist_ok=True)
 
+# --- LOAD MODEL AT STARTUP ---
+# With Waitress, we can safely load the model once when the app starts.
+load_model()
 
 # --- FLASK ROUTE (The main webpage) ---
 @app.route('/', methods=['GET', 'POST'])
@@ -60,4 +61,5 @@ def index():
 
 # --- RUN THE APP ---
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Use Waitress to serve the app
+    serve(app, host='0.0.0.0', port=8080)
