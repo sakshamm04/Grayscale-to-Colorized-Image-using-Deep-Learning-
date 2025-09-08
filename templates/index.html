@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Image Colorizer</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #1e3a8a;
+            font-size: 2.5em;
+        }
+
+        .upload-section {
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            max-width: 600px;
+        }
+
+        button {
+            background-color: #1d4ed8;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1e40af;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #1e3a8a;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .metrics {
+            text-align: left;
+            font-size: 1.2em;
+        }
+
+        .metrics p {
+            margin: 15px 0;
+        }
+
+        .metrics strong {
+            color: #1d4ed8;
+            float: right;
+        }
+
+        .download-btn {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #16a34a;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background-color: #15803d;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🎨 Image Colorizer</h1>
+        <p>Upload a grayscale image and watch it come to life with color!</p>
+    </div>
+
+    <div class="upload-section">
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" required>
+            <button type="submit">Colorize!</button>
+        </form>
+    </div>
+
+    {% if original_image %}
+    <div class="results-grid">
+
+        <div class="card">
+            <h2>Original Grayscale</h2>
+            <img src="{{ url_for('static', filename='uploads/' + original_image) }}">
+            <a href="{{ url_for('static', filename='uploads/' + original_image) }}" class="download-btn" download>
+                Download Original
+            </a>
+        </div>
+
+        <div class="card">
+            <h2>Colorized Image</h2>
+            <img src="{{ url_for('static', filename='colorized/' + colorized_image) }}">
+            <a href="{{ url_for('static', filename='colorized/' + colorized_image) }}" class="download-btn" download>
+                Download Colorized
+            </a>
+        </div>
+
+        <div class="card metrics">
+            <h2>Predicted Quality</h2>
+            <p>Structural Similarity (SSIM):<strong>{{ ssim }}</strong></p>
+            <p>Peak Signal-to-Noise Ratio (PSNR):<strong>{{ psnr }} dB</strong></p>
+        </div>
+
+        <div class="card">
+            <h2>Color Histogram</h2>
+            <img src="{{ url_for('static', filename='plots/' + plot_image) }}">
+        </div>
+
+    </div>
+    {% endif %}
+
+</body>
+
+</html>
