@@ -7,63 +7,62 @@ import joblib
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import requests # <--- Make sure 'requests' is in your requirements.txt
+import requests
 
-# --- MODEL DOWNLOAD AND LOAD LOGIC ---
+# --- GLOBAL VARIABLES ---
+# We will initialize these in the load_model() function
+net = None
+reg_model = None
+hull_path = os.path.join("models", 'pts_in_hull.npy')
+proto_path = os.path.join("models", 'colorization_deploy_v2.prototxt')
+model_path = os.path.join("models", "colorization_release_v2.caffemodel")
 
-# Define paths and the direct download URL
-model_dir = "models"
-model_name = "colorization_release_v2.caffemodel"
-model_path = os.path.join(model_dir, model_name)
-proto_path = os.path.join(model_dir, 'colorization_deploy_v2.prototxt')
-hull_path = os.path.join(model_dir, 'pts_in_hull.npy')
+def load_model():
+    """
+    Loads all ML models into memory. This function will be called once
+    by each Gunicorn worker process.
+    """
+    # Use 'global' to modify the variables defined outside this function
+    global net, reg_model
 
-# Your direct Google Drive download link
-download_url = "https://drive.google.com/uc?export=download&id=1vbxBPDvkKtIZUKM0bAi7NbWeZbohRnw1"
-
-# Check if the model file exists, and download it if it doesn't
-if not os.path.exists(model_path):
-    print(f"'{model_name}' not found. Downloading from Google Drive...")
-    os.makedirs(model_dir, exist_ok=True)
+    # --- MODEL DOWNLOAD LOGIC ---
+    download_url = "https://drive.google.com/uc?export=download&id=1vbxBPDvkKtIZUKM0bAi7NbWeZbohRnw1"
+    if not os.path.exists(model_path):
+        print(f"'{os.path.basename(model_path)}' not found. Downloading...")
+        os.makedirs("models", exist_ok=True)
+        try:
+            response = requests.get(download_url, stream=True)
+            response.raise_for_status()
+            with open(model_path, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=8192): f.write(chunk)
+            print("✅ Model downloaded successfully!")
+        except requests.exceptions.RequestException as e:
+            print(f"❌ Error downloading model: {e}")
+            exit()
+    
+    # --- MODEL INITIALIZATION LOGIC ---
+    print("⏳ Initializing colorizer engine...")
     try:
-        response = requests.get(download_url, stream=True)
-        response.raise_for_status() # Raise an exception for bad status codes
-        with open(model_path, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-        print("✅ Model downloaded successfully!")
-    except requests.exceptions.RequestException as e:
-        print(f"❌ Error downloading model: {e}")
-        exit() # Exit if the download fails
+        net = dnn.readNetFromCaffe(proto_path, model_path)
+        kernel = np.load(hull_path)
 
-# --- LOAD MODELS (The rest of the file is the same) ---
-print("⏳ Initializing colorizer engine...")
+        class8 = net.getLayerId("class8_ab")
+        conv8 = net.getLayerId("conv8_313_rh")
+        pts = kernel.transpose().reshape(2, 313, 1, 1)
+        net.getLayer(class8).blobs = [pts.astype("float32")]
+        net.getLayer(conv8).blobs = [np.full([1, 313], 2.606, dtype="float32")]
 
-try:
-    net = dnn.readNetFromCaffe(proto_path, model_path)
-    kernel = np.load(hull_path)
+        reg_model = joblib.load('regression_model.pkl')
+        print("✅ Colorizer engine ready!")
+    except Exception as e:
+        print(f"❌ Error loading models: {e}")
+        exit()
 
-    # Add the cluster centers as 1x1 convolutions to the model
-    class8 = net.getLayerId("class8_ab")
-    conv8 = net.getLayerId("conv8_313_rh")
-    pts = kernel.transpose().reshape(2, 313, 1, 1)
-    net.getLayer(class8).blobs = [pts.astype("float32")]
-    net.getLayer(conv8).blobs = [np.full([1, 313], 2.606, dtype="float32")]
-
-    reg_model = joblib.load('regression_model.pkl')
-    print("✅ Colorizer engine ready!")
-
-except cv2.error as e:
-    print(f"❌ OpenCV Error: Failed to load model files. Make sure .prototxt and .npy files are present. Error: {e}")
-    exit()
-except FileNotFoundError as e:
-    print(f"❌ FileNotFoundError: Could not find a necessary file. Error: {e}")
-    exit()
-
-
-# --- CORE FUNCTIONS ---
+# --- CORE FUNCTIONS (These remain unchanged) ---
 def process_image(image_path):
-    # ... (rest of your functions remain exactly the same) ...
+    # ... (rest of your functions are exactly the same) ...
+    if net is None:
+        raise RuntimeError("Model has not been loaded. Cannot process image.")
     image = cv2.imread(image_path)
     if image is None:
         raise FileNotFoundError(f"Image not found at path: {image_path}")
@@ -82,8 +81,7 @@ def process_image(image_path):
     return colorized_bgr
 
 def predict_quality_metrics(colorized_image_obj):
-    if reg_model is None:
-        return 0.0, 0.0
+    if reg_model is None: return 0.0, 0.0
     features = cv2.calcHist([colorized_image_obj], [0, 1, 2], None, [8, 8, 8], [0, 256, 0, 256, 0, 256]).flatten()
     predicted_metrics = reg_model.predict([features])
     ssim_pred, psnr_pred = predicted_metrics[0]
