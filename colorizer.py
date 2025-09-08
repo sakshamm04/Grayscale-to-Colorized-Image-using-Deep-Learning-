@@ -10,26 +10,34 @@ import matplotlib.pyplot as plt
 import requests
 
 # --- GLOBAL VARIABLES ---
-# We will initialize these in the load_model() function
+# Initialize models as None. They will be loaded on the first request.
 net = None
 reg_model = None
-hull_path = os.path.join("models", 'pts_in_hull.npy')
-proto_path = os.path.join("models", 'colorization_deploy_v2.prototxt')
-model_path = os.path.join("models", "colorization_release_v2.caffemodel")
+model_loaded = False # A flag to ensure we only load once
 
 def load_model():
     """
-    Loads all ML models into memory. This function will be called once
-    by each Gunicorn worker process.
+    Loads all ML models into the global variables.
     """
-    # Use 'global' to modify the variables defined outside this function
-    global net, reg_model
+    global net, reg_model, model_loaded
 
+    # If already loaded, do nothing
+    if model_loaded:
+        return
+
+    print("--- LAZY LOADING MODELS (FIRST REQUEST) ---")
+    
     # --- MODEL DOWNLOAD LOGIC ---
+    model_dir = "models"
+    model_name = "colorization_release_v2.caffemodel"
+    model_path = os.path.join(model_dir, model_name)
+    proto_path = os.path.join(model_dir, 'colorization_deploy_v2.prototxt')
+    hull_path = os.path.join(model_dir, 'pts_in_hull.npy')
     download_url = "https://drive.google.com/uc?export=download&id=1vbxBPDvkKtIZUKM0bAi7NbWeZbohRnw1"
+
     if not os.path.exists(model_path):
-        print(f"'{os.path.basename(model_path)}' not found. Downloading...")
-        os.makedirs("models", exist_ok=True)
+        print(f"'{model_name}' not found. Downloading...")
+        os.makedirs(model_dir, exist_ok=True)
         try:
             response = requests.get(download_url, stream=True)
             response.raise_for_status()
@@ -53,16 +61,20 @@ def load_model():
         net.getLayer(conv8).blobs = [np.full([1, 313], 2.606, dtype="float32")]
 
         reg_model = joblib.load('regression_model.pkl')
+        model_loaded = True # Set flag to True after successful loading
         print("✅ Colorizer engine ready!")
     except Exception as e:
         print(f"❌ Error loading models: {e}")
-        exit()
+        model_loaded = False # Ensure flag is false on failure
+        # We raise the exception to let Flask know something went wrong
+        raise e
 
-# --- CORE FUNCTIONS (These remain unchanged) ---
+# --- CORE FUNCTIONS ---
 def process_image(image_path):
-    # ... (rest of your functions are exactly the same) ...
-    if net is None:
-        raise RuntimeError("Model has not been loaded. Cannot process image.")
+    # LAZY LOADING CHECK: Load model if it's not already in memory
+    if not model_loaded:
+        load_model()
+
     image = cv2.imread(image_path)
     if image is None:
         raise FileNotFoundError(f"Image not found at path: {image_path}")
@@ -81,7 +93,10 @@ def process_image(image_path):
     return colorized_bgr
 
 def predict_quality_metrics(colorized_image_obj):
-    if reg_model is None: return 0.0, 0.0
+    # LAZY LOADING CHECK
+    if not model_loaded:
+        load_model()
+    
     features = cv2.calcHist([colorized_image_obj], [0, 1, 2], None, [8, 8, 8], [0, 256, 0, 256, 0, 256]).flatten()
     predicted_metrics = reg_model.predict([features])
     ssim_pred, psnr_pred = predicted_metrics[0]
@@ -89,6 +104,7 @@ def predict_quality_metrics(colorized_image_obj):
 
 def save_rgb_histogram(image_obj, save_path):
     plt.figure(figsize=(8, 4))
+    # ... (rest of function is the same) ...
     colors = ('b', 'g', 'r')
     for i, color in enumerate(colors):
         hist = cv2.calcHist([image_obj], [i], None, [256], [0, 256])
