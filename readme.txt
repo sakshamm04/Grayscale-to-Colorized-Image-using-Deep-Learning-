@@ -12,7 +12,7 @@ file was created to store the trained model. A PKL file serializes (saves) the m
 allowing it to be reloaded quickly without retraining, significantly improving efficiency.
 A set of 10 image pairs (grayscale and corresponding colorized images) was used for
 initial evaluation. To enhance user interaction, there is a simple and attractive interface
-built with the Streamlit library that enables users to browse and upload grayscale images for
+built with the flask that enables users to browse and upload grayscale images for
 automatic colorization. A histogram feature further visualizes the frequency of RGB values
 along the pixel range, giving insights into the color distribution. This project provides
 a holistic approach to automated image restoration, quality analysis, and efficient reuse
