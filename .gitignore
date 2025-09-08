@@ -1,0 +1,11 @@
+# Python
+Project-Folder/
+__pycache__/
+*.pyc
+
+# IDE specific
+.vscode/
+.idea/
+
+# Local files
+test_output.jpg
