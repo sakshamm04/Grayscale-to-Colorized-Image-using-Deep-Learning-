@@ -1,3 +1,5 @@
+<img width="1366" height="768" alt="Screenshot (4)" src="https://github.com/user-attachments/assets/bfd832a8-2630-43ca-8b84-713b45c915ee" />
+
 ---
 title: Grayscale To Colorized Image Converter
 colorFrom: pink
@@ -6,8 +8,6 @@ sdk: docker
 pinned: false
 license: mit
 ---
-
-<img width="1280" height="640" alt="Screenshot (4)" src="https://github.com/user-attachments/assets/49745482-3e17-4d29-8ab8-9e1c6ab41b68" />
 
 # **AI-Powered Grayscale-to-Color Image Converter**
 
