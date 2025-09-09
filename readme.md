@@ -1,6 +1,5 @@
 ---
 title: Grayscale To Colorized Image Converter
-emoji: 🌍
 colorFrom: pink
 colorTo: purple
 sdk: docker
@@ -8,186 +7,144 @@ pinned: false
 license: mit
 ---
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
-
 <img width="1280" height="640" alt="Screenshot (4)" src="https://github.com/user-attachments/assets/49745482-3e17-4d29-8ab8-9e1c6ab41b68" />
 
-AI-Powered Grayscale to Colorized Image Converter
-This project presents a comprehensive solution for converting grayscale images to vibrant colorized versions using state-of-the-art deep learning techniques. Designed for restoring historical black-and-white photographs, the system combines advanced AI colorization with rigorous quality assessment and modern web deployment.
+# **AI-Powered Grayscale-to-Color Image Converter**
 
-Project Overview
-The application leverages a pretrained Caffe deep neural network model, trained on diverse image datasets, to perform automatic colorization while maintaining structural integrity. A custom regression model provides quantitative quality assessment through SSIM and PSNR metrics, ensuring reliable performance evaluation.
+This project delivers an end-to-end solution for transforming grayscale images into vibrant colorized versions with deep learning. It is tailored for restoring historical black-and-white photographs and combines advanced AI colorization, rigorous quality assessment, and a modern web deployment pipeline.
 
-Key Features
-Core AI Functionality
-Automatic Image Colorization: Utilizes a pretrained Caffe deep learning model trained on diverse datasets to produce vivid and realistic colorizations
+---
 
-Quality Assessment: Custom regression model predicts SSIM (Structural Similarity Index Measure) and PSNR (Peak Signal-to-Noise Ratio) scores
+## **Project Overview**
 
-High Structural Accuracy: Achieves 99% structural preservation (SSIM), ensuring image details remain intact
+The application leverages a **pretrained Caffe** deep neural network—trained on diverse image datasets—to perform automatic colorization while preserving structural integrity. A custom regression model provides quantitative quality assessment through **SSIM** and **PSNR** metrics, ensuring reliable evaluation.
 
-PSNR Performance: Current range of 17-28 dB with optimization potential toward the ideal 30 dB target
+---
 
-Technical Innovation
-Efficient Model Deployment: Git LFS integration for seamless large model file management (129MB+ model files)
+## **Key Features**
 
-Serialized Model Storage: PKL (Pickle) files enable rapid model loading without retraining, reducing computation time significantly
+### **Core AI Functionality**
+- **Automatic Image Colorization** – Pretrained Caffe model produces vivid, realistic colorizations.  
+- **Quality Assessment** – Regression model predicts **SSIM** and **PSNR** scores.  
+- **High Structural Accuracy** – Achieves **99 % SSIM**, keeping image details intact.  
+- **PSNR Performance** – Current range **17–28 dB**; target **30 dB** for further improvement.
 
-Optimized Pipeline: Streamlined processing workflow from upload to colorization to quality analysis
+### **Technical Innovation**
+- **Efficient Model Deployment** – Git LFS handles large 129 MB model files.  
+- **Serialized Model Storage** – PKL files reload models instantly without retraining.  
+- **Optimized Pipeline** – Streamlined workflow from upload → colorization → quality analysis.
 
-Modern Web Interface
-Professional UI Design: Modern gradient-based design with responsive grid layout
+### **Modern Web Interface**
+- **Professional UI Design** with responsive grid layout.  
+- **Mobile-Responsive** for desktop, tablet, and phone.  
+- **Interactive File Selection** shows chosen file name & size.  
+- **Real-Time Loading Indicators** via animated spinner.  
+- **Comprehensive Downloads** for original, colorized images, and RGB histograms.
 
-Mobile-Responsive: Optimized for desktop, tablet, and mobile viewing
+### **Advanced Analytics**
+- **RGB Histogram Visualization** – Interactive color-distribution chart.  
+- **Quality Metrics Dashboard** – Live SSIM/PSNR display.  
+- **Visual Comparison** – Side-by-side original versus colorized.
 
-Interactive File Selection: Dynamic file name display with size information
+### **Cloud Integration**
+- **Appwrite Cloud Storage** for image persistence and sharing.  
+- **HuggingFace Spaces Deployment** for production hosting.  
+- **Secure File Handling** using base64 encoding in transit.
 
-Real-time Loading Indicators: Professional loading states with spinning animations
+---
 
-Comprehensive Downloads: One-click download for original images, colorized results, and RGB histograms
+## **Technical Architecture**
 
-Advanced Analytics
-RGB Histogram Visualization: Interactive color distribution analysis showing frequency across pixel ranges
+### **Deep Learning Stack**
+- **Framework**: Caffe with specialized colorization architecture.  
+- **Model Size**: 129 MB pretrained weights.  
+- **Input Processing**: LAB color-space conversion for accuracy.  
+- **Network Layers**: Custom `class8_ab` and `conv8_313_rh`.
 
-Quality Metrics Dashboard: Real-time SSIM and PSNR score display in styled metric cards
+### **Backend Technologies**
+- **Flask** + Waitress WSGI  
+- **OpenCV** for image ops  
+- **scikit-learn** regression model  
+- **Matplotlib** for histograms
 
-Visual Comparison: Side-by-side original vs. colorized image comparison
+### **Frontend Technologies**
+- Modern CSS & responsive design  
+- JavaScript for file/loader interactivity  
+- Base64 inline image rendering (no temp files)
 
-Cloud Integration
-Appwrite Cloud Storage: Seamless cloud storage integration for image persistence and sharing
+### **Deployment Infrastructure**
+- **Git LFS**, **Docker**, **HuggingFace Spaces**, **Appwrite**
 
-HuggingFace Spaces Deployment: Production-ready deployment on HuggingFace's ML platform
+---
 
-Secure File Handling: Base64 encoding for secure image transmission and display
+## **Performance Metrics**
 
-Technical Architecture
-Deep Learning Stack
-Framework: Caffe neural network with specialized colorization architecture
+| Metric | Result |
+|--------|--------|
+| **SSIM** | ~ 99 % |
+| **PSNR** | 17–28 dB |
+| **Avg. Colorization Time** | < 10 s |
+| **Model Load Time** | < 5 s |
 
-Model Size: 129MB pretrained model optimized for diverse image types
+**Evaluation Dataset**: 10 curated grayscale–color pairs covering portraits, landscapes, and historic scenes.
 
-Input Processing: LAB color space conversion for enhanced colorization accuracy
+---
 
-Network Layers: Custom class8_ab and conv8_313_rh layer configurations
+## **Enhanced User Experience**
 
-Backend Technologies
-Flask: Lightweight web server with Waitress WSGI for production deployment
+- Smart file selection with size display  
+- Loading spinner (“AI is colorizing…”)  
+- One-click downloads for every output  
+- “Process Another Image” restart flow  
+- Clearly separated sections: Original, Colorized, Metrics, Histogram
 
-OpenCV: Advanced image processing and computer vision operations
+---
 
-scikit-learn: Custom regression model for quality metric prediction
+## **Future Enhancements**
 
-Matplotlib: RGB histogram generation and visualization
+1. **PSNR Optimization** to surpass 30 dB.  
+2. **Larger & Diverse Datasets** for robustness.  
+3. **Batch Processing** of multiple images.  
+4. **4K+ Resolution** support.  
 
-Frontend Technologies
-Modern CSS: Gradient backgrounds, card layouts, hover effects, and smooth animations
+Planned roadmap: user accounts, REST API, style-transfer modes, native mobile apps.
 
-Responsive Design: Grid-based layout with mobile-first approach
+---
 
-JavaScript: Interactive file selection, loading states, and form validation
+## **Project Impact**
 
-Base64 Image Handling: Efficient image display without temporary file storage
+This repository showcases:
 
-Deployment Infrastructure
-Git LFS: Large file storage for model files with automatic tracking
+- **Research-grade quality** (SSIM/PSNR evaluation)  
+- **Production-ready deployment** on scalable cloud infra  
+- **Professional UX** with modern design and analytics  
+- **Comprehensive documentation** for quick adoption
 
-Docker: Containerized deployment with optimized Debian base image
+---
 
-HuggingFace Spaces: Scalable cloud hosting with automatic builds
+## **Technologies Used**
 
-Appwrite: Cloud storage backend with secure API integration
+| Category | Stack |
+|----------|-------|
+| Deep Learning | Caffe |
+| Regression | scikit-learn (Pickle) |
+| Backend | Flask, Waitress |
+| Frontend | HTML / CSS / JS |
+| Imaging | OpenCV, Matplotlib |
+| Cloud | Appwrite, HuggingFace |
+| Versioning | Git LFS |
 
-Performance Metrics
-Quality Assessment Results
-SSIM Score: ~99% structural similarity preservation
+---
 
-PSNR Range: 17-28 dB (targeting 30 dB optimization)
+## **Conclusion**
 
-Processing Speed: <10 seconds average colorization time
+This project demonstrates the synergy of cutting-edge AI, robust engineering, and thoughtful UX in digital image restoration. By uniting a powerful Caffe-based colorization model with real-time quality metrics and a polished interface, it delivers a practical platform for historians, designers, and developers alike.
 
-Model Loading: <5 seconds with Git LFS optimization
+**Key Achievement**: A research-grade model packaged as an accessible web application with professional user experience and cloud-native deployment.
+"""
 
-Evaluation Dataset
-Training Data: 10 curated grayscale-colorized image pairs
+# overwrite README.md
+with open("README.md", "w", encoding="utf-8") as f:
+    f.write(readme_text)
 
-Validation: Cross-validation on diverse image types and subjects
-
-Performance: Consistent quality across portraits, landscapes, and historical photos
-
-Enhanced User Experience
-Interactive Features
-Smart File Selection: Visual feedback with file name and size display
-
-Loading States: Professional spinner with "AI is colorizing..." messaging
-
-Universal Downloads: Download buttons for all generated content
-
-Process Management: "Process Another Image" workflow optimization
-
-Visual Design Elements
-Modern Aesthetics: Professional gradient backgrounds and card-based layouts
-
-Responsive Grid: Automatic adaptation to screen sizes
-
-Hover Effects: Interactive elements with smooth transitions
-
-Clear Sections: Dedicated spaces for each component (original, colorized, metrics, histogram)
-
-Future Enhancements
-Technical Improvements
-PSNR Optimization: Advanced training techniques to achieve 30+ dB targets
-
-Expanded Datasets: Broader evaluation with diverse image categories
-
-Batch Processing: Multiple image processing capabilities
-
-Higher Resolution: Support for 4K+ image colorization
-
-Feature Roadmap
-User Management: Account systems with image history
-
-API Integration: RESTful API for third-party applications
-
-Style Transfer: Multiple colorization styles and artistic filters
-
-Mobile App: Native iOS/Android applications
-
-Project Impact
-This application demonstrates a complete end-to-end solution for AI-powered image restoration, combining:
-
-Research-Grade Quality: Academic-level SSIM/PSNR evaluation metrics
-
-Professional UI/UX: Industry-standard interface design and user experience
-
-Production Deployment: Scalable cloud infrastructure with Git LFS optimization
-
-Comprehensive Analytics: Visual and quantitative quality assessment tools
-
-Innovation Highlights
-Git LFS Integration: First-class large model file management for ML applications
-
-Modern Web Design: Contemporary UI patterns with mobile-responsive layouts
-
-Real-time Analytics: Instant quality metrics with visual histogram analysis
-
-Cloud-Native Architecture: Seamless integration of storage, compute, and deployment services
-
-Technologies Used
-Deep Learning Framework: Caffe for neural network-based colorization
-
-Regression Model: Custom-built using scikit-learn; stored and loaded via Pickle for efficiency
-
-Web Technologies: Flask for backend server, HTML/CSS/JavaScript for interactive UI
-
-Image Processing: OpenCV and Matplotlib for image manipulation and visualization
-
-Cloud Services: Appwrite for storage, HuggingFace Spaces for deployment
-
-Version Control: Git LFS for large model file management
-
-Conclusion
-This project exemplifies the convergence of advanced AI research, modern web development, and cloud deployment practices. By combining a powerful Caffe-based colorization model with comprehensive quality assessment and an intuitive user interface, it provides a robust platform for digital image restoration.
-
-The efficient use of Git LFS for model storage, professional UI design, and cloud integration makes this solution suitable for both academic research and practical applications in digital restoration, creative workflows, and historical preservation projects.
-
-Key Achievement: Successfully transformed a complex AI research project into a production-ready web application with professional-grade user experience and deployment infrastructure.
+print("README.md updated successfully.")
