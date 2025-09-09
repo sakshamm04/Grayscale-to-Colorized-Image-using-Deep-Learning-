@@ -133,9 +133,3 @@ This project demonstrates the synergy of cutting-edge AI, robust engineering, an
 
 **Key Achievement**: A research-grade model packaged as an accessible web application with professional user experience and cloud-native deployment.
 """
-
-# overwrite README.md
-with open("README.md", "w", encoding="utf-8") as f:
-    f.write(readme_text)
-
-print("README.md updated successfully.")
