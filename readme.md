@@ -1,14 +1,5 @@
 <img width="1366" height="768" alt="Screenshot (4)" src="https://github.com/user-attachments/assets/bfd832a8-2630-43ca-8b84-713b45c915ee" />
 
----
-title: Grayscale To Colorized Image Converter
-colorFrom: pink
-colorTo: purple
-sdk: docker
-pinned: false
-license: mit
----
-
 # **AI-Powered Grayscale-to-Color Image Converter**
 
 This project delivers an end-to-end solution for transforming grayscale images into vibrant colorized versions with deep learning. It is tailored for restoring historical black-and-white photographs and combines advanced AI colorization, rigorous quality assessment, and a modern web deployment pipeline.
