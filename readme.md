@@ -10,6 +10,8 @@ license: mit
 
 Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
 
+<img width="1280" height="640" alt="Screenshot (4)" src="https://github.com/user-attachments/assets/49745482-3e17-4d29-8ab8-9e1c6ab41b68" />
+
 AI-Powered Grayscale to Colorized Image Converter
 This project presents a comprehensive solution for converting grayscale images to vibrant colorized versions using state-of-the-art deep learning techniques. Designed for restoring historical black-and-white photographs, the system combines advanced AI colorization with rigorous quality assessment and modern web deployment.
 
